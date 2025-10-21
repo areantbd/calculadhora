@@ -146,27 +146,6 @@ function App() {
     };
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    // Forzar todos los inputs a HH:MM si tienen 4 dígitos, si no, vacío
-    const formattedInputs = inputs.map((val) => {
-      let clean = val.replace(/[^\d]/g, "");
-      if (clean.length === 4) return autoFormat(clean);
-      return "";
-    });
-    const res = sumTimes(formattedInputs);
-    if (!res) {
-      setResult(null);
-      setError(
-        "Ningún campo tiene un valor válido en formato HH:MM (por ejemplo, 0015 se convierte a 00:15)"
-      );
-    } else {
-      setResult(res);
-      setInputs(formattedInputs);
-    }
-  };
-
   // Referencias para salto automático
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -183,7 +162,6 @@ function App() {
           alignItems: "center",
           justifyContent: "center",
           transition: "background 0.3s",
-          overflow: "auto",
         }}
       >
         <Box
@@ -198,11 +176,9 @@ function App() {
             borderRadius: 3,
             boxShadow: 6,
             position: "relative",
-            maxHeight: { xs: "90vh", sm: 600 },
-            overflowY: "auto",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            alignItems: "stretch",
             boxSizing: "border-box",
           }}
         >
@@ -226,65 +202,75 @@ function App() {
           >
             Time calculator
           </Box>
-          <Box component="form" onSubmit={handleSubmit} autoComplete="off">
-            {inputs.map((value, idx) => (
-              <Box
-                key={idx}
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
-              >
-                <TextField
-                  inputRef={(el) => (inputRefs.current[idx] = el)}
-                  variant="outlined"
-                  size="small"
-                  placeholder="HH:MM"
-                  value={value}
-                  onChange={(e) => handleInputChange(idx, e.target.value)}
-                  onBlur={(e) => handleInputBlur(idx, e.target.value)}
-                  inputProps={{
-                    maxLength: 5, // Para HH:MM
-                    style: { textAlign: "center", width: 80 },
-                    inputMode: "text",
-                    placeholder: "HHMM",
-                  }}
-                  sx={{ flex: 1 }}
-                />
-                <Button
-                  variant="outlined"
-                  color="error"
-                  size="small"
-                  onClick={() => removeInput(idx)}
-                  disabled={inputs.length === 1}
-                  sx={{ minWidth: 32, px: 0 }}
+          <Box
+            sx={{
+              flex: 1,
+              mb: 2,
+            }}
+          >
+            <Box component="form" autoComplete="off">
+              {inputs.map((value, idx) => (
+                <Box
+                  key={idx}
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                 >
-                  -
-                </Button>
-                {idx === inputs.length - 1 && (
+                  <TextField
+                    inputRef={(el) => (inputRefs.current[idx] = el)}
+                    variant="outlined"
+                    size="small"
+                    placeholder="HH:MM"
+                    value={value}
+                    onChange={(e) => handleInputChange(idx, e.target.value)}
+                    onBlur={(e) => handleInputBlur(idx, e.target.value)}
+                    inputProps={{
+                      maxLength: 5, // Para HH:MM
+                      style: {
+                        textAlign: "center",
+                        width: 80,
+                        maxWidth: "100%",
+                      },
+                      inputMode: "text",
+                      placeholder: "HHMM",
+                    }}
+                    sx={{ flex: 1, maxWidth: "100%" }}
+                  />
                   <Button
                     variant="outlined"
-                    color="primary"
+                    color="error"
                     size="small"
-                    onClick={addInput}
+                    onClick={() => removeInput(idx)}
+                    disabled={inputs.length === 1}
                     sx={{ minWidth: 32, px: 0 }}
                   >
-                    +
+                    -
                   </Button>
-                )}
-              </Box>
-            ))}
-            <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => {
-                  setInputs(["", "", ""]);
-                  setResult(null);
-                }}
-                sx={{ flex: 1, fontWeight: 500, borderRadius: 2 }}
-              >
-                Limpiar
-              </Button>
+                  {idx === inputs.length - 1 && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={addInput}
+                      sx={{ minWidth: 32, px: 0 }}
+                    >
+                      +
+                    </Button>
+                  )}
+                </Box>
+              ))}
             </Box>
-            {/* Debug visual: mostrar los valores de entrada y formateados dentro del formulario */}
+          </Box>
+          <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => {
+                setInputs(["", "", ""]);
+                setResult(null);
+              }}
+              sx={{ flex: 1, fontWeight: 500, borderRadius: 2 }}
+            >
+              Limpiar
+            </Button>
           </Box>
           {error && (
             <Box
