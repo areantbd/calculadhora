@@ -54,10 +54,17 @@ function App() {
   const handleInputChange = (index: number, value: string) => {
     // Solo dígitos, máximo 4
     let clean = value.replace(/[^\d]/g, "").slice(0, 4);
-    const newInputs = [...inputs];
+    let newInputs = [...inputs];
     newInputs[index] = clean;
+    // Si el usuario está en el último input y escribe 4 dígitos, añadir uno nuevo automáticamente
+    if (clean.length === 4 && index === inputs.length - 1) {
+      newInputs.push("");
+      setInputs(newInputs);
+      setTimeout(() => inputRefs.current[index + 1]?.focus(), 0);
+      return;
+    }
     setInputs(newInputs);
-    // Salto automático si se completan 4 dígitos
+    // Salto automático si se completan 4 dígitos y hay siguiente input
     if (clean.length === 4 && inputRefs.current[index + 1]) {
       setTimeout(() => inputRefs.current[index + 1]?.focus(), 0);
     }
@@ -71,12 +78,45 @@ function App() {
     const newInputs = [...inputs];
     newInputs[index] = formatted;
     setInputs(newInputs);
+    // Calcular automáticamente al cambiar el foco
+    const formattedInputs = newInputs.map((val) => {
+      let c = val.replace(/[^\d]/g, "");
+      if (c.length === 4) return autoFormat(c);
+      return "";
+    });
+    const res = sumTimes(formattedInputs);
+    if (!res) {
+      setResult(null);
+      setError(
+        "Ningún campo tiene un valor válido en formato HH:MM (por ejemplo, 0015 se convierte a 00:15)"
+      );
+    } else {
+      setResult(res);
+      setError(null);
+    }
   };
 
   const addInput = () => setInputs([...inputs, ""]);
   const removeInput = (index: number) => {
     if (inputs.length === 1) return;
-    setInputs(inputs.filter((_, i) => i !== index));
+    const newInputs = inputs.filter((_, i) => i !== index);
+    setInputs(newInputs);
+    // Calcular automáticamente tras eliminar
+    const formattedInputs = newInputs.map((val) => {
+      let c = val.replace(/[^\d]/g, "");
+      if (c.length === 4) return autoFormat(c);
+      return "";
+    });
+    const res = sumTimes(formattedInputs);
+    if (!res) {
+      setResult(null);
+      setError(
+        "Ningún campo tiene un valor válido en formato HH:MM (por ejemplo, 0015 se convierte a 00:15)"
+      );
+    } else {
+      setResult(res);
+      setError(null);
+    }
   };
 
   function sumTimes(times: string[]): { hhmm: string; decimal: string } | null {
@@ -184,7 +224,7 @@ function App() {
               letterSpacing: 1,
             }}
           >
-            CalculadHora
+            Time calculator
           </Box>
           <Box component="form" onSubmit={handleSubmit} autoComplete="off">
             {inputs.map((value, idx) => (
@@ -242,14 +282,6 @@ function App() {
                 sx={{ flex: 1, fontWeight: 500, borderRadius: 2 }}
               >
                 Limpiar
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ flex: 2, fontWeight: 600, borderRadius: 2, boxShadow: 3 }}
-              >
-                Calcular
               </Button>
             </Box>
             {/* Debug visual: mostrar los valores de entrada y formateados dentro del formulario */}
