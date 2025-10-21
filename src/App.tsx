@@ -40,9 +40,6 @@ function App() {
     decimal: string;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // Para depuración visual
-  const [debugInputs, setDebugInputs] = useState<string[]>([]);
-  const [debugFormatted, setDebugFormatted] = useState<string[]>([]);
 
   // Formatea 4 dígitos a HH:MM
   const autoFormat = (raw: string) => {
@@ -112,15 +109,12 @@ function App() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    // Guardar para depuración visual
-    setDebugInputs([...inputs]);
     // Forzar todos los inputs a HH:MM si tienen 4 dígitos, si no, vacío
     const formattedInputs = inputs.map((val) => {
       let clean = val.replace(/[^\d]/g, "");
       if (clean.length === 4) return autoFormat(clean);
       return "";
     });
-    setDebugFormatted(formattedInputs);
     const res = sumTimes(formattedInputs);
     if (!res) {
       setResult(null);
