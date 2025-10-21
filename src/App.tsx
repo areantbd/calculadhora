@@ -38,6 +38,7 @@ function App() {
   const [result, setResult] = useState<{
     hhmm: string;
     decimal: string;
+    jira: string;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -119,7 +120,9 @@ function App() {
     }
   };
 
-  function sumTimes(times: string[]): { hhmm: string; decimal: string } | null {
+  function sumTimes(
+    times: string[]
+  ): { hhmm: string; decimal: string; jira: string } | null {
     let totalMinutes = 0;
     let anyValid = false;
     for (const t of times) {
@@ -140,9 +143,12 @@ function App() {
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const decimal = (totalMinutes / 60).toFixed(2);
+    const hhmm = `${hours}:${minutes.toString().padStart(2, "0")}`;
+    const jira = `${hours}h ${minutes}m`;
     return {
-      hhmm: `${hours}:${minutes.toString().padStart(2, "0")}`,
+      hhmm,
       decimal,
+      jira,
     };
   }
 
@@ -298,6 +304,17 @@ function App() {
             >
               <strong style={{ fontSize: 18 }}>Total:</strong>
               <Box sx={{ mt: 1, fontSize: 17 }}>
+                Jira ={" "}
+                <span
+                  style={{ fontWeight: 700 }}
+                  onDoubleClick={() => {
+                    navigator.clipboard.writeText(result.jira);
+                  }}
+                >
+                  {result.jira}
+                </span>
+              </Box>
+              <Box sx={{ fontSize: 17 }}>
                 HH:MM = <span style={{ fontWeight: 700 }}>{result.hhmm}</span>
               </Box>
               <Box sx={{ fontSize: 17 }}>
