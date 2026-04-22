@@ -8,6 +8,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 function App() {
   // Modo claro/oscuro
@@ -303,23 +304,38 @@ function App() {
               }}
             >
               <strong style={{ fontSize: 18 }}>Total:</strong>
-              <Box sx={{ mt: 1, fontSize: 17 }}>
+              <Box sx={{ mt: 1, fontSize: 17, display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
                 Jira ={" "}
-                <span
-                  style={{ fontWeight: 700 }}
-                  onDoubleClick={() => {
-                    navigator.clipboard.writeText(result.jira);
-                  }}
+                <span style={{ fontWeight: 700 }}>{result.jira}</span>
+                <IconButton
+                  size="small"
+                  onClick={() => navigator.clipboard.writeText(result.jira)}
+                  title="Copiar al portapapeles"
                 >
-                  {result.jira}
-                </span>
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
               </Box>
-              <Box sx={{ fontSize: 17 }}>
-                HH:MM = <span style={{ fontWeight: 700 }}>{result.hhmm}</span>
+              <Box sx={{ fontSize: 17, display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
+                HH:MM ={" "}
+                <span style={{ fontWeight: 700 }}>{result.hhmm}</span>
+                <IconButton
+                  size="small"
+                  onClick={() => navigator.clipboard.writeText(result.hhmm)}
+                  title="Copiar al portapapeles"
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
               </Box>
-              <Box sx={{ fontSize: 17 }}>
+              <Box sx={{ fontSize: 17, display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
                 Decimal ={" "}
                 <span style={{ fontWeight: 700 }}>{result.decimal}</span>
+                <IconButton
+                  size="small"
+                  onClick={() => navigator.clipboard.writeText(result.decimal)}
+                  title="Copiar al portapapeles"
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
               </Box>
             </Box>
           )}
